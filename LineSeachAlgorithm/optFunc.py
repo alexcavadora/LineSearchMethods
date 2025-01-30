@@ -18,16 +18,6 @@ class optFunc:
     else: 
       print('Grade not supported')
 
-class optFuncCuadratic(optFunc):
-  def eval(self, x: float) -> float:
-    return x**2
-
-  def grad(self, x: float) -> float:
-    return 2*x
-
-  def hess(self) -> float:
-    return 2.0
-
 class optFuncSphere(optFunc):
   def eval(self):
     pass
@@ -41,6 +31,3 @@ class optFuncSphere(optFunc):
 
   def hess(self, x):
     return 2*self.ident(x)
-
-if __name__ == "__main__":
-  f = optFunc()

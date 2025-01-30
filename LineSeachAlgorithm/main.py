@@ -1,32 +1,25 @@
-class LinSearch:
-    def __init__(self, func, stopCrit, stepCond):
-        """
-        Initialize linear search algorithm
-        Args:
-            func: OptFunc object containing the function to optimize
-            stopCrit: Stopping criterion function
-            stepCond: Step condition function
-        """
-        self.func = func
-        self.stopCrit = stopCrit
-        self.stepCond = stepCond
+from optFunc import optFuncSphere
 
-    def solve(self, x0):
-        """
-        Execute linear search optimization
-        Args:
-            x0: Initial point to start search
-        Returns:
-            Optimal point found
-        """
-        pass
+class linSearch:
+  def __init__(self, func, stopCrit=1e-5, stepCond=0.1):
+    self.func = func
+    self.stopCrit = stopCrit
+    self.stepCond = stepCond
+    self.solutions = []
 
-    def plot2D(self):
-        """
-        Creates 2D visualization of optimization process
-        Shows:
-            - Function contour
-            - Search path
-            - Start and end points
-        """
-        pass
+  def solve(self, x0):
+    x = x0
+    while abs(self.func.grad(x) > self.stopCrit):
+      x = x - self.stepCond * self.func.grad(x)
+      self.solutions.append(x)
+    return x
+
+  def plot2D(self):
+    pass
+
+if __name__ == "__main__":
+  func = optFuncSphere()
+  optimizer = linSearch(func)
+  x_opt = optimizer.solve(5)
+  print(f"Optimo encontrado en: {x_opt}")
+  optimizer.plot2D()
