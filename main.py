@@ -3,12 +3,16 @@ class OptFunc:
         """Initialize optimization function"""
         pass
 
-    def eval(self):
+    def eval(self, x):
         """
         Evaluates the function at a given point
         Returns: Function value at point
         """
-        pass
+    
+    def ident(self, x):
+        n = len(x)
+        iden = []
+        
 
     def grad(self):
         """
