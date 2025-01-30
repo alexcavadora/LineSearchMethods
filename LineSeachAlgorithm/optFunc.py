@@ -19,7 +19,7 @@ class optFunc:
       print('Grade not supported')
 
 class optFuncSphere(optFunc):
-  def eval(self,x):
+  def eval(self, x):
     return sum(xi ** 2 for xi in x)
 
   def ident(self, x):
