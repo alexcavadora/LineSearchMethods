@@ -10,19 +10,15 @@ class OptFunc:
         """
         pass
 
-    def grad(self):
-        """
-        Calculates gradient of the function
-        Returns: Gradient vector at point
-        """
-        pass
+    def ident(self, x):
+        n = len(x)
+        return [[1 if i == j else 0 for j in range(n)] for i in range(n)]
 
-    def hess(self):
-        """
-        Calculates Hessian matrix of the function
-        Returns: Hessian matrix at point
-        """
-        pass
+    def grad(self, x):
+        return 2*x
+
+    def hess(self, x):
+        return 2*self.ident(x)
 
     def output(self, grade):
         """
