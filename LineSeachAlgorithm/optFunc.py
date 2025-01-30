@@ -1,33 +1,46 @@
-class OptFunc:
-    def __init__(self):
-        """Initialize optimization function"""
-        pass
+class optFunc:
+  def eval(self, x: float) -> float:
+    pass
 
-    def eval(self):
-        """
-        Evaluates the function at a given point
-        Returns: Function value at point
-        """
-        pass
+  def grad(self, x: float) -> float:
+    pass
 
-    def ident(self, x):
-        n = len(x)
-        return [[1 if i == j else 0 for j in range(n)] for i in range(n)]
+  def hess(self) -> float:
+    pass
 
-    def grad(self, x):
-        return 2*x
+  def output(self, x: float, grade: int = 2) -> float:
+    if (grade == 1): 
+      return self.eval(x)
+    elif (grade == 2):
+      return self.grad(x)
+    elif (grade == 3):
+      return self.hess()
+    else: 
+      print('Grade not supported')
 
-    def hess(self, x):
-        return 2*self.ident(x)
+class optFuncCuadratic(optFunc):
+  def eval(self, x: float) -> float:
+    return x**2
 
-    def output(self, grade):
-        """
-        Calls one of the above methods based on grade
-        Args:
-            grade: Integer indicating which method to call
-                  0 = eval()
-                  1 = grad() 
-                  2 = hess()
-        Returns: Result from called method
-        """
-        pass
+  def grad(self, x: float) -> float:
+    return 2*x
+
+  def hess(self) -> float:
+    return 2.0
+
+class optFuncSphere(optFunc):
+  def eval(self):
+    pass
+
+  def ident(self, x):
+    n = len(x)
+    return [[1 if i == j else 0 for j in range(n)] for i in range(n)]
+
+  def grad(self, x):
+    return 2*x
+
+  def hess(self, x):
+    return 2*self.ident(x)
+
+if __name__ == "__main__":
+  f = optFunc()
