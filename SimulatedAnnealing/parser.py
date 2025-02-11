@@ -7,7 +7,7 @@ def parser(fileContent):
     {
       "n_cities": int,
       "distances": list[list[float]],
-      "cities_xy": list[list[float]]
+      "xy": list[list[float]]
     }
   """
   data = {
