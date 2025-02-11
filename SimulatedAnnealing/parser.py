@@ -14,6 +14,7 @@ def parser(fileContent):
     "n_cities": 0,
     "distances": [],
     "xy": []
+    
   }
 
   try:
