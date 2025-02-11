@@ -1,4 +1,4 @@
-from optFunc import optFuncSphere
+from LineSearchAlgorithm.optFunc import optFuncSphere
 import matplotlib.pyplot as plt
 import numpy as np
 
