@@ -21,7 +21,7 @@ class SimAnn:
         """
         Realiza un 2-opt swap, invirtiendo el segmento entre i y j.
         """
-        i, j = dataset["xy"][:0], dataset["xy"][:1]
+        i, j = self.dataset["xy"][:0], self.dataset["xy"][:1]
         route = list(range(self.node_size))
         new_route = route[:i] + route[i:j+1][::-1] + route[j+1:]
         return new_route
