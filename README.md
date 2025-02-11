@@ -2,5 +2,5 @@
 
 Line search algorithm
 ```sh
-  python -m LineSearchAlgorithm.main
+python -m LineSearchAlgorithm.main
 ```
