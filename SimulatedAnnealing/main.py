@@ -7,23 +7,45 @@ import matplotlib.pyplot as plt
 from parser import parser
 
 
+def plotArch(point1, point2, dist=1):
+    # Define the center of the circle that forms the arch
+    center = (point1 + point2) / 2 + np.array([0, 1])  # Shift up for an arch
+    # Compute the radius
+    radius = np.linalg.norm(point1 - center)
+
+    # Compute angles for the arc
+    theta1 = np.arctan2(point1[1] - center[1], point1[0] - center[0])
+    theta2 = np.arctan2(point2[1] - center[1], point2[0] - center[0])
+    theta = np.linspace(theta1, theta2, 100)
+
+    # Parametric equation for the arc
+    x = center[0] + radius * np.cos(theta)
+    y = center[1] + radius * np.sin(theta)
+    return x, y
+
+    # plt.scatter([point1[0], point2[0]], [point1[1], point2[1]], color='red', zorder=3)  # Mark endpoints
+
+
+
+
+
 def plot2D(idx_perm, data):
     coord_x = [data["xy"][i][0] for i in range(len(data["xy"]))]
     coord_y = [data["xy"][i][1] for i in range(len(data["xy"]))]
 
-    def log_base_change(value, base):
-        return np.log(value) / np.log(base)
-    # coord_y = log_base_change(coord_y, 500)
-    # coord_y = [y**2 for y in coord_y]
+    max_d =  max(max(data["distances"]))
+    min_d =  min(min(data["distances"]))
 
     # Crear el gráfico de puntos
-    plt.scatter(coord_x, coord_y, c='green')
+    plt.scatter(coord_x, coord_y, c='b')
 
     # Conectar los puntos con una línea gris usando idx_perm
     for i in range(len(idx_perm)):
         start_idx = idx_perm[i]
         end_idx = idx_perm[(i + 1) % len(idx_perm)]
-        plt.plot([coord_x[start_idx], coord_x[end_idx]], [coord_y[start_idx], coord_y[end_idx]], 'gray', alpha=0.3)
+        x, y = plotArch(np.array([coord_x[start_idx], coord_y[start_idx]]), np.array([coord_x[end_idx], coord_y[end_idx]]))
+        grad = (data["distances"][start_idx][end_idx] - min_d) / (max_d - min_d)
+        plt.plot(x, y, 'b-', linewidth=2 , alpha=grad)
 
     # Añadir títulos y etiquetas
     plt.title('Ciudades')
@@ -35,7 +57,7 @@ def plot2D(idx_perm, data):
 
 def main():
     # Load and parse the dataset
-    with open("./dataset/rc_205.2.txt") as f:
+    with open("./dataset/rc_201.1.txt") as f:
         fileContent = f.read()
 
     data = parser(fileContent)
