@@ -23,11 +23,12 @@ def plotArch(point1, point2, dist=1):
 
     # plt.scatter([point1[0], point2[0]], [point1[1], point2[1]], color='red', zorder=3)  # Mark endpoints
 
-def plot2D(idx_perm, data):
+def plot2D(idx_perm, data, total_distance):
     coord_x = [data["xy"][i][0] for i in range(len(data["xy"]))]
     coord_y = [data["xy"][i][1] for i in range(len(data["xy"]))]
 
     # Crear el gráfico de puntos
+    plt.figure(figsize=(10, 7))
     plt.style.use('ggplot')
     plt.scatter(coord_x, coord_y, c='gray')
     # Anotar los índices de los puntos en cada punto
@@ -50,11 +51,11 @@ def plot2D(idx_perm, data):
             alpha = 0.6
         else:
             alpha = 0.8        
-        plt.plot(x, y, 'b-', linewidth=2, alpha=alpha)
+        plt.plot(x, y, 'c-', linewidth=2, alpha=alpha)
 
 
     # Añadir títulos y etiquetas
-    plt.title('Distancias Ciudades')
+    plt.title(f"Distancias Ciudades \n Total Distance: {total_distance}")
     plt.xlabel('Coord X')
     plt.ylabel('Coord Y')
 
@@ -79,7 +80,7 @@ def main():
     print("Best Value (Distance):", best_solution.value)
 
     # Plot the best solution
-    plot2D(best_solution.path, data)
+    plot2D(best_solution.path, data, best_solution.value)
 
 
 if __name__ == "__main__":
