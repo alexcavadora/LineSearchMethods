@@ -27,6 +27,9 @@ class SimAnn:
         for i in range(1, len(path)):
             distance += self.dataset["distances"][path[i-1]][path[i]]
 
+        # Loop distance
+        distance += self.dataset["distances"][path[len(path)-1]][path[0]]
+
         return distance
 
     def opt_swap(self, route, i, j):
@@ -93,7 +96,7 @@ class SimAnn:
                     current_state.value = nextValue
             
             # Logging progress
-            if t % 1000 == 0:
+            if t % 100 == 0:
                 times.append(t)
                 values.append(best_state.value)
                 print(f"Iteration {t}: Best path {best_state.path} with value {values[-1]}")
