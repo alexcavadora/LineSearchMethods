@@ -12,24 +12,21 @@ class SimAnn:
 
     def __init__(self, dataset, optmode=1):
         self.dataset = dataset
-        self.node_size = dataset["n_cities"]
+        self.node_size = dataset["n_cities"] #20
         self.optmode = optmode
 
         self.initial_state = State(list(range(self.node_size)), self.calculate_distance(list(range(self.node_size))))  # Default initial path
         self.current_state = self.initial_state
         self.best_state = self.initial_state
 
-    def calculate_distance(self, path):
+    def calculate_distance(self, path): # path = [4, 9, 14, 13, 18, 5, 8, 6, 7, 16, 17, 11, 0, 15, 2, 10, 12, 3, 19, 1]
         """ Calculate the total distance of the current path """
         distance = 0
+        # self.dataset['distances'][row][col]
+        
         for i in range(1, len(path)):
-            x1, y1 = self.dataset["xy"][path[i-1]]
-            x2, y2 = self.dataset["xy"][path[i]]
-            distance += np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-        # Assuming the path is circular, return to the starting city
-        x1, y1 = self.dataset["xy"][path[-1]]
-        x2, y2 = self.dataset["xy"][path[0]]
-        distance += np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+            distance += self.dataset["distances"][path[i-1]][path[i]]
+
         return distance
 
     def opt_swap(self, route, i, j):
@@ -96,9 +93,9 @@ class SimAnn:
                     current_state.value = nextValue
             
             # Logging progress
-            if t % 100 == 0:
+            if t % 1000 == 0:
                 times.append(t)
                 values.append(best_state.value)
-                print(f"Iteration {t}: Best path {best_state.path} with value {best_state.value}")
+                print(f"Iteration {t}: Best path {best_state.path} with value {values[-1]}")
         
         return best_state

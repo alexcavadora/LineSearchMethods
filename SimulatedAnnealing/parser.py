@@ -40,4 +40,6 @@ if __name__ == "__main__":
   with open("./dataset/rc_201.1.txt") as f:
     fileContent = f.read()
 
-  print(parser(fileContent))
+  # data = parser(fileContent)
+  # print(data['distances'][0] )
+  

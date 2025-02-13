@@ -33,22 +33,34 @@ def plot2D(idx_perm, data):
     coord_x = [data["xy"][i][0] for i in range(len(data["xy"]))]
     coord_y = [data["xy"][i][1] for i in range(len(data["xy"]))]
 
-    max_d =  max(max(data["distances"]))
-    min_d =  min(min(data["distances"]))
-
     # Crear el gráfico de puntos
-    plt.scatter(coord_x, coord_y, c='b')
+    plt.style.use('ggplot')
+    plt.scatter(coord_x, coord_y, c='gray')
+    # Anotar los índices de los puntos en cada punto
+    for i, (x, y) in enumerate(zip(coord_x, coord_y)):
+        plt.text(x, y, str(i), fontsize=12, ha='right')
 
     # Conectar los puntos con una línea gris usando idx_perm
     for i in range(len(idx_perm)):
         start_idx = idx_perm[i]
         end_idx = idx_perm[(i + 1) % len(idx_perm)]
         x, y = plotArch(np.array([coord_x[start_idx], coord_y[start_idx]]), np.array([coord_x[end_idx], coord_y[end_idx]]))
-        grad = (data["distances"][start_idx][end_idx] - min_d) / (max_d - min_d)
-        plt.plot(x, y, 'b-', linewidth=2 , alpha=grad)
+        distances = [data["distances"][start_idx][end_idx] for start_idx, end_idx in zip(idx_perm, idx_perm[1:] + idx_perm[:1])]
+        q1, q2, q3 = np.percentile(distances, [25, 50, 75])
+        
+        if data["distances"][start_idx][end_idx] <= q1:
+            alpha = 0.2
+        elif data["distances"][start_idx][end_idx] <= q2:
+            alpha = 0.4
+        elif data["distances"][start_idx][end_idx] <= q3:
+            alpha = 0.6
+        else:
+            alpha = 0.8        
+        plt.plot(x, y, 'b-', linewidth=2, alpha=alpha)
+
 
     # Añadir títulos y etiquetas
-    plt.title('Ciudades')
+    plt.title('Distancias Ciudades')
     plt.xlabel('Coord X')
     plt.ylabel('Coord Y')
 
@@ -63,7 +75,7 @@ def main():
     data = parser(fileContent)
 
     # Initialize Simulated Annealing
-    sm = SimAnn(data)
+    sm = SimAnn(data, optmode=2)
 
     # Run the Simulated Annealing algorithm for 1000 iterations
     best_solution = sm.simulated_annealing(1000)
