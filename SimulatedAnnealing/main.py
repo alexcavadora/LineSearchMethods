@@ -1,11 +1,9 @@
-import random as rn
-import itertools
-from SimulatedAnnealing import SimAnn
-
+import os
 import numpy as np
 import matplotlib.pyplot as plt
-from parser import parser
 
+from Parser import parser
+from SimulatedAnnealing import SimAnn
 
 def plotArch(point1, point2, dist=1):
     # Define the center of the circle that forms the arch
@@ -24,10 +22,6 @@ def plotArch(point1, point2, dist=1):
     return x, y
 
     # plt.scatter([point1[0], point2[0]], [point1[1], point2[1]], color='red', zorder=3)  # Mark endpoints
-
-
-
-
 
 def plot2D(idx_perm, data):
     coord_x = [data["xy"][i][0] for i in range(len(data["xy"]))]
@@ -69,7 +63,7 @@ def plot2D(idx_perm, data):
 
 def main():
     # Load and parse the dataset
-    with open("./dataset/rc_201.1.txt") as f:
+    with open(os.path.join(__file__, "../dataset/rc_201.1.txt")) as f:
         fileContent = f.read()
 
     data = parser(fileContent)
