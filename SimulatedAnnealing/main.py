@@ -6,7 +6,6 @@ from time import time
 from Parser import parser
 from SimulatedAnnealing import SimAnn
 
-import time 
 
 def plotArch(point1, point2, dist=1):
     # Define the center of the circle that forms the arch
@@ -128,18 +127,19 @@ def plot2D(idx_perm, data, total_distance,index = False, curve=False, log=False)
 
 def main():
     # Load and parse the dataset
-    with open(os.path.join(__file__, "dataset/n200w140.002.txt")) as f:
+    dataset_path = os.path.join(os.path.dirname(__file__), "dataset/n200w140.002.txt")
+    with open(dataset_path, "r") as f:
         fileContent = f.read()
 
     data = parser(fileContent)
 
     # Initialize Simulated Annealing
-    sm = SimAnn(data, optmode=2, C=100, p=0.75)  # C [50, 100, 200], p [0.9, ,1.0, 1.1]
+    sm = SimAnn(data, optmode=2, C=1000, p=0.75)  # C [50, 100, 200], p [0.9, ,1.0, 1.1]
 
     # Run the Simulated Annealing algorithm for 10,000 iterations
     start = time()
 
-    best_solution = sm.simulated_annealing(30000)
+    best_solution = sm.simulated_annealing(10000000)
     end = time()
 
     # Plot the best path found
@@ -155,7 +155,7 @@ def main():
 
 
 if __name__ == "__main__":
-    start = time.time()
+    start = time()
     main()
-    end = time.time()
+    end = time()
     print(end - start)
