@@ -1,4 +1,4 @@
-import numpy as cp
+import numpy as np
 
 class State:
     def __init__(self, path, value):
@@ -47,10 +47,10 @@ class SimAnn:
     def random_neighbor(self, route):
         """Generate a random neighbor without needing to enumerate all neighbors."""
         n = len(route)
-        i = int(cp.random.randint(0, n))
-        j = int(cp.random.randint(0, n))
+        i = int(np.random.randint(0, n))
+        j = int(np.random.randint(0, n))
         while i == j:
-            j = int(cp.random.randint(0, n))
+            j = int(np.random.randint(0, n))
         if self.optmode == 1:
             return self.opt_swap(route, i, j)
         else:
@@ -80,8 +80,8 @@ class SimAnn:
                 current_state.value = next_value
             else:
                 # Calculate the probability of acceptance for a worse state
-                p_accept = cp.exp(-delta_E / temperature)
-                if cp.random.rand() < p_accept:
+                p_accept = np.exp(-delta_E / temperature)
+                if np.random.rand() < p_accept:
                     current_state.path = next_route
                     current_state.value = next_value
 
