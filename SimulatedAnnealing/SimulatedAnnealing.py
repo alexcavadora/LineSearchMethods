@@ -1,18 +1,17 @@
 import numpy as cp
 
 class State:
-    #keep track of states- the current path and its cost/value
     def __init__(self, path, value):
         self.path = path
         self.value = value
 
 class SimAnn:
-    C_input = 7  # Initial temperature constant
-    p_input = 0.37  # Cooling rate
+    C_input = 100
+    p_input = 0.75  
 
     def __init__(self, dataset, optmode=1, C=C_input, p=p_input):
         self.dataset = dataset
-        self.node_size = dataset["n_cities"] #20
+        self.node_size = dataset["n_cities"]
         self.optmode = optmode
         self.C = C
         self.p = p
@@ -95,3 +94,4 @@ class SimAnn:
                 print(f"Iteración {t}: valor {best_state.value}")
 
         return best_state
+
