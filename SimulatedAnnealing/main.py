@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import time
 
-from parser import parser
+from Parser import parser
 from SimulatedAnnealing import SimAnn
 
 def plotArch(point1, point2, dist=1):
