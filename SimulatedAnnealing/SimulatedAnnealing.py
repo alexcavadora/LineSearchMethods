@@ -10,10 +10,12 @@ class SimAnn:
     C_input = 7  # Initial temperature constant
     p_input = 0.37  # Cooling rate
 
-    def __init__(self, dataset, optmode=1):
+    def __init__(self, dataset, optmode=1, C=C_input, p=p_input):
         self.dataset = dataset
         self.node_size = dataset["n_cities"] #20
         self.optmode = optmode
+        self.C = C
+        self.p = p
 
         self.initial_state = State(list(range(self.node_size)), self.calculate_distance(list(range(self.node_size))))  # Default initial path
         self.current_state = self.initial_state
@@ -41,6 +43,7 @@ class SimAnn:
     def two_opt_swap(self, route, i, j):
         """Perform a 2-opt swap, reversing the segment between i and j."""
         new_route = route[:i] + route[i:j+1][::-1] + route[j+1:]
+        # 2 opt swap is a reversal of the segment between i and j in the route 
         return new_route
 
     def Neighbor(self, route):
@@ -59,9 +62,9 @@ class SimAnn:
                     neighbors.append(self.two_opt_swap(route, i, j))
         return neighbors
 
-    def schedule(self, time, C=C_input, p=p_input):
+    def schedule(self, time):
         """Temperature schedule for simulated annealing."""
-        return C / (time + 1) ** p
+        return self.C / (time + 1) ** self.p
 
     def simulated_annealing(self, n_iter):
         """Simulated Annealing algorithm for optimization."""
@@ -79,13 +82,10 @@ class SimAnn:
             nextMove = neighbors[np.random.randint(len(neighbors))]
             nextValue = self.calculate_distance(nextMove)
 
-            # Accept the new state if it improves the solution
-            if nextValue < best_state.value:
-                best_state.path = nextMove
-                best_state.value = nextValue
+            delta_E = nextValue - current_state.value
 
             # If the new state is better than the current state, accept it
-            if nextValue < current_state.value:
+            if delta_E < 0:
                 current_state.path = nextMove
                 current_state.value = nextValue
             else:  # New state is worse
@@ -96,9 +96,10 @@ class SimAnn:
                     current_state.value = nextValue
             
             # Logging progress
-            if t % 100 == 0:
+            if t % 10 == 0:
                 times.append(t)
                 values.append(best_state.value)
-                print(f"Iteration {t}: Best path {best_state.path} with value {values[-1]}")
+                # print(f"Iteration {t}: Best path {best_state.path} with value {values[-1]}")
+                print(f"Iteration {t}: with value {values[-1]}")
         
         return best_state
