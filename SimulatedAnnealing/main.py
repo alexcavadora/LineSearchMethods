@@ -132,12 +132,12 @@ def main():
     data = parser(fileContent)
 
     # Initialize Simulated Annealing
-    sm = SimAnn(data, optmode=2, C=100, p=0.75)  # C [50, 100, 200], p [0.9, ,1.0, 1.1]
+    sm = SimAnn(data, optmode=2, C=100, p=0.5)  # C [50, 100, 200], p [0.9, ,1.0, 1.1]
 
     # Run the Simulated Annealing algorithm for 10,000 iterations
     start = time()
 
-    best_solution = sm.simulated_annealing(30000)
+    best_solution = sm.simulated_annealing(200000)
     end = time()
 
     # Plot the best path found

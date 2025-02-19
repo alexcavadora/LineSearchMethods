@@ -1,5 +1,5 @@
-import numpy as np
-import itertools
+import numpy as cp
+
 class State:
     #keep track of states- the current path and its cost/value
     def __init__(self, path, value):
@@ -17,89 +17,81 @@ class SimAnn:
         self.C = C
         self.p = p
 
-        self.initial_state = State(list(range(self.node_size)), self.calculate_distance(list(range(self.node_size))))  # Default initial path
-        self.current_state = self.initial_state
-        self.best_state = self.initial_state
+        initial_path = list(range(self.node_size))
+        initial_value = self.calculate_distance(initial_path)
+        self.initial_state = State(initial_path, initial_value)
+        self.current_state = State(initial_path.copy(), initial_value)
+        self.best_state = State(initial_path.copy(), initial_value)
 
-    def calculate_distance(self, path): # path = [4, 9, 14, 13, 18, 5, 8, 6, 7, 16, 17, 11, 0, 15, 2, 10, 12, 3, 19, 1]
+    def calculate_distance(self, path):
         """ Calculate the total distance of the current path """
         distance = 0
-        # self.dataset['distances'][row][col]
-        
+        d = self.dataset["distances"]
         for i in range(1, len(path)):
-            distance += self.dataset["distances"][path[i-1]][path[i]]
-
+            distance += d[path[i-1]][path[i]]
+        
         # Loop distance
-        distance += self.dataset["distances"][path[len(path)-1]][path[0]]
-
+        distance += d[path[-1]][path[0]] 
         return distance
 
     def opt_swap(self, route, i, j):
         """Perform a simple swap between two nodes i and j in the route."""
-        new_route = route[:]
+        new_route = route.copy()
         new_route[i], new_route[j] = new_route[j], new_route[i]
         return new_route
 
     def two_opt_swap(self, route, i, j):
         """Perform a 2-opt swap, reversing the segment between i and j."""
-        new_route = route[:i] + route[i:j+1][::-1] + route[j+1:]
         # 2 opt swap is a reversal of the segment between i and j in the route 
-        return new_route
+        return route[:i] + route[i:j+1][::-1] + route[j+1:]
 
-    def Neighbor(self, route):
-        """Generates all neighbors of the current path by applying OPT or 2-OPT."""
-        neighbors = []
+    def random_neighbor(self, route):
+        """Generate a random neighbor without needing to enumerate all neighbors."""
         n = len(route)
-        
+        i = int(cp.random.randint(0, n))
+        j = int(cp.random.randint(0, n))
+        while i == j:
+            j = int(cp.random.randint(0, n))
         if self.optmode == 1:
-            # Generate neighbors with 1-OPT (simple swap)
-            for i, j in itertools.combinations(range(n), 2):
-                neighbors.append(self.opt_swap(route, i, j))
+            return self.opt_swap(route, i, j)
         else:
-            # Generate neighbors with 2-OPT (segment reversal)
-            for i, j in itertools.combinations(range(n), 2):
-                if j > i:
-                    neighbors.append(self.two_opt_swap(route, i, j))
-        return neighbors
+            if i > j:
+                i, j = j, i
+            return self.two_opt_swap(route, i, j)
 
-    def schedule(self, time):
+    def schedule(self, t):
         """Temperature schedule for simulated annealing."""
-        return self.C / (time + 1) ** self.p
+        return self.C / (t + 1) ** self.p
 
     def simulated_annealing(self, n_iter):
         """Simulated Annealing algorithm for optimization."""
-        current_state = self.initial_state
+        current_state = self.current_state
         best_state = self.best_state
-        
-        times = []
-        values = []
-        
+
         for t in range(n_iter):
             temperature = self.schedule(t)
-            
-            # Randomly choose a neighbor path
-            neighbors = self.Neighbor(current_state.path)
-            nextMove = neighbors[np.random.randint(len(neighbors))]
-            nextValue = self.calculate_distance(nextMove)
+            # Seleccionar un vecino aleatorio
+            next_route = self.random_neighbor(current_state.path)
+            next_value = self.calculate_distance(next_route)
+            delta_E = next_value - current_state.value
 
-            delta_E = nextValue - current_state.value
-
-            # If the new state is better than the current state, accept it
+            # Accept automatically if it improves the solution
             if delta_E < 0:
-                current_state.path = nextMove
-                current_state.value = nextValue
-            else:  # New state is worse
-                E = -abs(nextValue - current_state.value)  # Energy difference
-                p_accept = np.exp(E / temperature)  # Acceptance probability
-                if np.random.rand() < p_accept:
-                    current_state.path = nextMove
-                    current_state.value = nextValue
-            
-            # Logging progress
-            if t % 10 == 0:
-                times.append(t)
-                values.append(best_state.value)
-                # print(f"Iteration {t}: Best path {best_state.path} with value {values[-1]}")
-                print(f"Iteration {t}: with value {values[-1]}")
-        
+                current_state.path = next_route
+                current_state.value = next_value
+            else:
+                # Calculate the probability of acceptance for a worse state
+                p_accept = cp.exp(-delta_E / temperature)
+                if cp.random.rand() < p_accept:
+                    current_state.path = next_route
+                    current_state.value = next_value
+
+            # Update the best state found
+            if current_state.value < best_state.value:
+                best_state.path = current_state.path.copy()
+                best_state.value = current_state.value
+
+            if t % 20 == 0:
+                print(f"Iteración {t}: valor {best_state.value}")
+
         return best_state
